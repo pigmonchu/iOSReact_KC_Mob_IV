@@ -28,7 +28,11 @@ final class VolumeAboutView: UIView {
 	}
 
 	/// Bindable observer for the about text
-	var about: AnyObserver<String?> {
-		return aboutLabel.rx.text.asObserver()
-	}
+//	var about: AnyObserver<String?> {
+//		return aboutLabel.rx.text.asObserver()
+//	}
+    
+    var about: AnyObserver<NSAttributedString?> {
+        return aboutLabel.rx.attributedText.asObserver()
+    }
 }
