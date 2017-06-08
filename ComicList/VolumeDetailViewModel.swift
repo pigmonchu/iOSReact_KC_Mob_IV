@@ -31,7 +31,7 @@ final class VolumeDetailViewModel {
 		.map { $0.results[0].description }
         .map {
             do {
-                let data = $0?.data(using: String.Encoding.utf8, allowLossyConversion: true)
+                let data = $0?.data(using: String.Encoding.utf16, allowLossyConversion: true)
                 if let d = data {
                     let str = try NSAttributedString(data: d,
                                                      options: [NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType],
