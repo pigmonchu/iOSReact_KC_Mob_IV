@@ -67,4 +67,19 @@ extension Volume {
 			]
 		)
 	}
+    
+    public static func allVolumes(page: Int) -> Resource<Response<Volume>> {
+        return Resource(
+            comicVinePath: "volumes",
+            parameters: [
+                "api_key": apiKey,
+                "format": "json",
+                "field_list": "name,image,api_detail_url",
+                "limit": "10",
+                "page": String(page),
+            ]
+        )
+
+    }
+    
 }

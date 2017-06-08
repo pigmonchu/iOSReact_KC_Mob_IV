@@ -7,12 +7,13 @@
 //
 
 import UIKit
+import RxSwift
 
 class VolumeListViewController: UIViewController {
 
 	// MARK: - Properties
 
-	@IBOutlet private weak var collectionView: UICollectionView! {
+    @IBOutlet private weak var collectionView: UICollectionView! {
 		didSet {
 			collectionView.register(VolumeCell.self)
 			collectionView.backgroundColor = UIColor(named: .background)
@@ -21,10 +22,14 @@ class VolumeListViewController: UIViewController {
 
 	/// Called when the user selects a volume
 	var didSelectVolume: (VolumeViewModel) -> Void = { _ in }
+    
 
 	/// The view model
 	fileprivate let viewModel: VolumeListViewModel
-
+    
+    private let nextPage = PublishSubject<Void>()
+    private let disposeBag = DisposeBag()
+    
 	// MARK: - Initialization
 
 	init(viewModel: VolumeListViewModel) {
@@ -41,7 +46,10 @@ class VolumeListViewController: UIViewController {
 	override func viewDidLoad() {
 		super.viewDidLoad()
 
-		// We need to reload our collection view when the
+
+//        setUpBindings()
+        
+        // We need to reload our collection view when the
 		// comic list is updated
 		viewModel.didUpdate = collectionView.reloadData
 	}
@@ -53,12 +61,15 @@ extension VolumeListViewController: UICollectionViewDataSource {
 
 	func collectionView(_ collectionView: UICollectionView,
 						numberOfItemsInSection section: Int) -> Int {
-		return viewModel.numberOfVolumes
+        //Aquí debería disparar la petición y quedarse esperando -> Obtener el total y luego pasar al detalle.
+        //Además debería poderse paginar. Mirar Suggestion
+        
+		return viewModel.numberOfVolumes //Aquí debería esperar a que vuelva de VolumeListViwModel (WebClient.load)
 	}
 
 	func collectionView(_ collectionView: UICollectionView,
 						cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-		let volume = viewModel.item(at: indexPath.item)
+		let volume = viewModel.item(at: indexPath.item) //Aqui debería esperar a que vuelva de VolumeListViewModel (WebClient.load)
 		let cell: VolumeCell = collectionView.dequeueReusableCell(for: indexPath)
 
 		cell.coverView.url = volume.coverURL
@@ -77,3 +88,8 @@ extension VolumeListViewController: UICollectionViewDelegate {
 		didSelectVolume(volume)
 	}
 }
+
+//private func setUpBindings() {
+//    viewModel.load(autoload)
+//    
+//}

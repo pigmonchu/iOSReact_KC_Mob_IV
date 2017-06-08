@@ -101,13 +101,13 @@ final class SearchResultsViewController: UITableViewController {
 	}
 
 	private func setupBindings() {
-		// Reload our table view when a new page is loaded
+		// Reload our table view when a new page is loaded. Inyecto esto en el viewModel (SearchResultsViewModel)
 		viewModel.didLoadPage = { [weak self] in
 			self?.tableView.reloadData()
 		}
 
-		viewModel.load(autoloadNextOn: nextPage.asObservable())
-			.subscribe()
-			.addDisposableTo(disposeBag)
+		viewModel.load(autoloadNextOn: nextPage.asObservable()) //nextPage is a PublicSubject (http://reactivex.io/documentation/subject.html -> la inscripción al I&C)
+			.subscribe() //suscripción explicita
+			.addDisposableTo(disposeBag) //fijar como cancelable explicitamente
 	}
 }

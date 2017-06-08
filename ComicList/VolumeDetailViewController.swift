@@ -60,46 +60,56 @@ class VolumeDetailViewController: UIViewController {
 	}
 
 	private func setupBindings() {
-		// Bind header
 
-		let volume = viewModel.volume
+        bindHeader()
+        bindAbout()
+        bindIssues()
 
-		headerView.title = volume.title
-		headerView.publisher = volume.publisherName
-		headerView.coverURL = volume.coverURL
+    }
+    
+    private func bindHeader() {
+        let volume = viewModel.volume
+        
+        headerView.title = volume.title
+        headerView.publisher = volume.publisherName
+        headerView.coverURL = volume.coverURL
+        
+        viewModel.isSaved
+            .bindTo(headerView.isSaved)
+            .addDisposableTo(disposeBag)
+        
+        headerView.didTapButton = viewModel.addOrRemove
+        
+    }
+    
+    private func bindAbout() {
+        viewModel.about
+            .bindTo(aboutView.about)
+            .addDisposableTo(disposeBag)
+        
+        viewModel.about
+            .map { $0?.string.isEmpty ?? true }
+            .bindTo(aboutView.rx.isHidden)
+            .addDisposableTo(disposeBag)
+        
+    }
+    
+    private func bindIssues() {
+        viewModel.issues
+            .bindTo(issuesView.collectionView.rx.items) { collectionView, item, issue in
+                let cell: VolumeCell = collectionView.dequeueReusableCell(for: item)
+                cell.titleLabel.text = issue.title
+                cell.coverView.url = issue.coverURL
+                
+                return cell
+            }
+            .addDisposableTo(disposeBag)
+        
+        viewModel.issues
+            .map { $0.isEmpty }
+            .bindTo(issuesView.rx.isHidden)
+            .addDisposableTo(disposeBag)
 
-		viewModel.isSaved
-			.bindTo(headerView.isSaved)
-			.addDisposableTo(disposeBag)
 
-		headerView.didTapButton = viewModel.addOrRemove
-
-		// Bind about
-
-		viewModel.about
-			.bindTo(aboutView.about)
-			.addDisposableTo(disposeBag)
-
-		viewModel.about
-			.map { $0?.isEmpty ?? true }
-			.bindTo(aboutView.rx.isHidden)
-			.addDisposableTo(disposeBag)
-
-		// Bind issues
-
-		viewModel.issues
-			.bindTo(issuesView.collectionView.rx.items) { collectionView, item, issue in
-				let cell: VolumeCell = collectionView.dequeueReusableCell(for: item)
-				cell.titleLabel.text = issue.title
-				cell.coverView.url = issue.coverURL
-
-				return cell
-			}
-			.addDisposableTo(disposeBag)
-		
-		viewModel.issues
-			.map { $0.isEmpty }
-			.bindTo(issuesView.rx.isHidden)
-			.addDisposableTo(disposeBag)
-	}
+    }
 }

@@ -30,7 +30,9 @@ public final class WebClient {
 	/// Loads the content of the specified resource.
 	public func load<M>(resource: Resource<M>) -> Observable<M> {
 		let r = resource.addingParameters(defaultParameters).request
-		return session.data(request: r).map { try resource.decode($0) }
+		return session.data(request: r).map {
+            try resource.decode($0)
+        }
 	}
 }
 
